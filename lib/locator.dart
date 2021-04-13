@@ -1,0 +1,13 @@
+import 'package:get_it/get_it.dart';
+import 'repository/map_route_repository.dart';
+import 'package:canoe_trip_planner/provider/map_route_provider.dart';
+import 'package:canoe_trip_planner/provider/auth_provider.dart';
+
+GetIt locator = GetIt.instance;
+
+void setupLocator() {
+  locator.registerLazySingleton(() => MapRouteRepository());
+  locator.registerLazySingleton(() => AuthProvider());
+
+  locator.registerFactory(() => MapRouteProvider());
+}
