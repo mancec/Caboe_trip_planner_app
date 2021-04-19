@@ -7,7 +7,7 @@ import 'dart:async';
 import 'package:canoe_trip_planner/provider/auth_provider.dart';
 import 'package:canoe_trip_planner/locator.dart';
 
-const String baseUrl = "https://416d97fb2ef8.ngrok.io/api";
+const String baseUrl = "https://1f326a8d08af.ngrok.io/api";
 
 class ApiBaseHelper {
   Future<dynamic> get(String url) async {
@@ -52,6 +52,8 @@ class ApiBaseHelper {
     var responseJson;
     try {
       print(baseUrl + url);
+      print("siuntimas");
+      print(body);
       final response = await http.post(baseUrl + url,
           headers: {'Authorization': 'Bearer' + token}, body: body);
       responseJson = _returnResponse(response);

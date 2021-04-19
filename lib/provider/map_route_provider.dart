@@ -1,8 +1,10 @@
 import 'package:canoe_trip_planner/locator.dart';
+import 'package:canoe_trip_planner/models/company_map_route.dart';
 import 'package:canoe_trip_planner/repository/map_route_repository.dart';
 import 'package:canoe_trip_planner/models/map_route.dart';
 import 'package:canoe_trip_planner/enums/viewstate.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class MapRouteProvider extends ChangeNotifier {
   MapRouteRepository _api = locator<MapRouteRepository>();
@@ -15,7 +17,7 @@ class MapRouteProvider extends ChangeNotifier {
     _state = newState;
   }
 
-  List<MapRoute> mapRoutes;
+  List<MapRoute> mapRoutes = [];
 
   MapRoute mapRoute;
 
@@ -27,6 +29,9 @@ class MapRouteProvider extends ChangeNotifier {
   Future getMapRoutes() async {
     setState(ViewState.Busy);
     mapRoutes = await _api.fetchMapRouteList();
+    List<LatLng> polyline = [];
+    // mapRoutes.add(CompanyMapRoute(
+    //     1, 'company route', polyline, "test", "company", "company@email.com"));
     setState(ViewState.Idle);
   }
 

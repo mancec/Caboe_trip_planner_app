@@ -33,6 +33,7 @@ dependencies:
   flutter_speed_dial: ^3.0.5
   location: ^3.0.0
   jwt_decode: ^0.3.1
+  flutter_masked_text: ^0.7.0
   permission:
 
   # The following adds the Cupertino Icons font to your application.

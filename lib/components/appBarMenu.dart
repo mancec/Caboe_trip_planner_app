@@ -1,5 +1,8 @@
 import 'package:canoe_trip_planner/enums/user_role.dart';
 import 'package:canoe_trip_planner/screens/Authentication/registration_screen.dart';
+import 'package:canoe_trip_planner/screens/Company/company_map_list_screen.dart';
+import 'package:canoe_trip_planner/screens/Company/company_post_create_screen.dart';
+import 'package:canoe_trip_planner/screens/Company/company_profile_screen.dart';
 import 'package:canoe_trip_planner/screens/RouteMaps/map_create_screen.dart';
 import 'package:canoe_trip_planner/screens/RouteMaps/map_list_screen.dart';
 import 'package:canoe_trip_planner/screens/RouteMaps/user_map_list_screen.dart';
@@ -34,7 +37,22 @@ class AppBarMenu extends StatelessWidget {
               leading: Icon(Icons.add_location_alt_rounded),
               title: Text('Create a company route'),
               onTap: () => {
-                Navigator.pushNamed(context, MapCreateScreen.id),
+                Navigator.pushNamed(context, CompanyPostScreen.id),
+              },
+            ),
+          ListTile(
+            leading: Icon(Icons.add_location_alt_rounded),
+            title: Text('Company profile'),
+            onTap: () => {
+              Navigator.pushNamed(context, CompanyProfileScreen.id),
+            },
+          ),
+          if (Provider.of<AuthProvider>(context).userRole == UserRole.company)
+            ListTile(
+              leading: Icon(Icons.add_location_alt_rounded),
+              title: Text('My company offers'),
+              onTap: () => {
+                Navigator.pushNamed(context, CompanyMapListScreen.id),
               },
             ),
           if (Provider.of<AuthProvider>(context).isAuthenticated)

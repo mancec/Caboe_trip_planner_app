@@ -1,3 +1,7 @@
+import 'package:canoe_trip_planner/screens/Company/company_map_create_screen.dart';
+import 'package:canoe_trip_planner/screens/Company/company_map_list_screen.dart';
+import 'package:canoe_trip_planner/screens/Company/company_post_create_screen.dart';
+import 'package:canoe_trip_planner/screens/Company/company_profile_screen.dart';
 import 'package:canoe_trip_planner/screens/RouteMaps/user_map_list_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:canoe_trip_planner/screens/login_screen.dart';
@@ -33,7 +37,11 @@ class MyApp extends StatelessWidget {
         MapCreateScreen.id: (context) => MapCreateScreen(),
         MapRouteListView.id: (context) => MapRouteListView(),
         MapRouteDetailScreen.id: (context) => MapRouteDetailScreen(),
-        UserMapListScreen.id: (context) => UserMapListScreen()
+        UserMapListScreen.id: (context) => UserMapListScreen(),
+        CompanyPostScreen.id: (context) => CompanyPostScreen(),
+        CompanyMapCreateScreen.id: (context) => CompanyMapCreateScreen(),
+        CompanyMapListScreen.id: (context) => CompanyMapListScreen(),
+        CompanyProfileScreen.id: (context) => CompanyProfileScreen()
       },
       home: WelcomeScreen(),
     );

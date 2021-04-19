@@ -29,7 +29,7 @@ class mapRouteListItem extends StatelessWidget {
               mapRoute.title,
               style: TextStyle(fontWeight: FontWeight.w900, fontSize: 16.0),
             ),
-            Text(mapRoute.author, maxLines: 2, overflow: TextOverflow.ellipsis)
+            // Text(mapRoute.author, maxLines: 2, overflow: TextOverflow.ellipsis)
           ],
         ),
       ),

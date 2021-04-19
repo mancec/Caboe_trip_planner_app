@@ -13,21 +13,15 @@ import 'package:provider/provider.dart';
 import 'package:canoe_trip_planner/provider/auth_provider.dart';
 import 'package:canoe_trip_planner/screens/Authentication/login.dart';
 
-class MapCreateScreen extends StatefulWidget {
-  static const String id = 'map_create_screen';
+class CompanyMapCreateScreen extends StatefulWidget {
+  static const String id = 'company_map_create_screen';
   @override
   _MapScreenState createState() => _MapScreenState();
 }
 
-class _MapScreenState extends State<MapCreateScreen> {
+class _MapScreenState extends State<CompanyMapCreateScreen> {
   MapRouteProvider mapRouteProvider = locator<MapRouteProvider>();
   MapRoute mapRoute = MapRoute();
-  final _formKey = GlobalKey<FormState>();
-  final TextEditingController _authorEditingController =
-      TextEditingController();
-  final TextEditingController _titleEditingController = TextEditingController();
-  final TextEditingController _descriptionEditingController =
-      TextEditingController();
 
   Completer<GoogleMapController> _controller = Completer();
   GoogleMapController controller;
@@ -35,10 +29,10 @@ class _MapScreenState extends State<MapCreateScreen> {
   List<LatLng> plineCoordinates = [];
   final Set<Marker> _markers = {};
   final Set<Polyline> _polyline = {};
-  bool isLoaded = false;
 
   static LatLng _lat1 = LatLng(13.035606, 77.562381);
   LatLng currentLocation;
+  bool isLoaded = false;
 
   @override
   void initState() {
@@ -182,73 +176,6 @@ class _MapScreenState extends State<MapCreateScreen> {
   }
 
   void _saveMap() async {
-    // mapRouteProvider.saveMapRoutes(mapRoute);
-    await showInformationDialog(context);
-  }
-
-  Future<void> showInformationDialog(BuildContext context) async {
-    return await showDialog(
-        context: context,
-        builder: (context) {
-          bool isChecked = false;
-          return StatefulBuilder(builder: (context, setState) {
-            return AlertDialog(
-              content: Form(
-                  key: _formKey,
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      TextFormField(
-                        controller: _authorEditingController,
-                        validator: (value) {
-                          return value.isNotEmpty ? null : "Enter your name";
-                        },
-                        decoration:
-                            InputDecoration(hintText: "Please enter your name"),
-                      ),
-                      TextFormField(
-                        controller: _titleEditingController,
-                        validator: (value) {
-                          return value.isNotEmpty ? null : "Enter a title";
-                        },
-                        decoration:
-                            InputDecoration(hintText: "Please enter a title"),
-                      ),
-                      TextFormField(
-                        controller: _descriptionEditingController,
-                        validator: (value) {
-                          return value.isNotEmpty
-                              ? null
-                              : "Enter a short description";
-                        },
-                        decoration: InputDecoration(
-                            hintText: "Please leave a short description"),
-                      ),
-                    ],
-                  )),
-              title: Text('Additional Route information'),
-              actions: <Widget>[
-                Padding(
-                  padding: EdgeInsets.all(16.0),
-                  child: InkWell(
-                    child: Text('Save', style: TextStyle(fontSize: 16)),
-                    onTap: () {
-                      if (_formKey.currentState.validate()) {
-                        mapRoute.author = _authorEditingController.text;
-                        mapRoute.title = _titleEditingController.text;
-                        mapRoute.description =
-                            _descriptionEditingController.text;
-
-                        // Do something like updating SharedPreferences or User Settings etc.
-                        mapRouteProvider.saveMapRoutes(mapRoute);
-                        Navigator.of(context).pop();
-                      }
-                    },
-                  ),
-                ),
-              ],
-            );
-          });
-        });
+    Navigator.pop(context, mapRoute.polyline);
   }
 }
