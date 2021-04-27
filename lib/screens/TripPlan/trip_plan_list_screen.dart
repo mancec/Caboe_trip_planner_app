@@ -1,3 +1,4 @@
+import 'package:canoe_trip_planner/components/appBarMenu.dart';
 import 'package:canoe_trip_planner/components/map_route_list_card.dart';
 import 'package:canoe_trip_planner/components/roundedButton.dart';
 import 'package:canoe_trip_planner/components/trip_plan_meniu_items.dart';
@@ -45,6 +46,7 @@ class _TripPlanListScreenState extends State<TripPlanListScreen> {
       child: Consumer<MapRouteProvider>(builder: (context, model, child) {
         return Scaffold(
             appBar: AppBar(),
+            drawer: AppBarMenu(),
             backgroundColor: backgroundColor,
             body: model.state == ViewState.Busy
                 ? Center(child: CircularProgressIndicator())

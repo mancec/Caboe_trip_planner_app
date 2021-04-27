@@ -13,48 +13,42 @@ import 'package:provider/provider.dart';
 import 'package:canoe_trip_planner/utils/helper.dart';
 import 'package:date_time_picker/date_time_picker.dart';
 
-class TripPlanTimeCreateScreen extends StatefulWidget {
+class TripPlanTimeEditScreen extends StatefulWidget {
   static const String id = 'trip_plan_time_create_screen';
   final int routeId;
   final String description;
+  final TripPlan tripPlan;
 
-  TripPlanTimeCreateScreen({this.routeId, this.description});
+  TripPlanTimeEditScreen({this.routeId, this.description, this.tripPlan});
   @override
-  _TripPlanTimeCreateScreenState createState() =>
-      _TripPlanTimeCreateScreenState();
+  _TripPlanTimeEditScreenState createState() => _TripPlanTimeEditScreenState();
 }
 
-class _TripPlanTimeCreateScreenState extends State<TripPlanTimeCreateScreen> {
+class _TripPlanTimeEditScreenState extends State<TripPlanTimeEditScreen> {
   final _formKey = GlobalKey<FormState>();
   Company company = Company();
   MapRouteProvider mapRouteProvider = MapRouteProvider();
   TripPlanProvider tripPlanProvider = TripPlanProvider();
   TextEditingController _descriptionEditingController = TextEditingController();
-  String startingDate = DateTime.now().toString();
-  String endingDate = DateTime.now().toString();
-  TripPlan tripPlan = TripPlan();
 
   @override
   void initState() {
     // mapRouteProvider.getMapRoute(widget.routeId);
+    tripPlanProvider.setTripPlan(widget.tripPlan);
     super.initState();
   }
 
   saveProfile() {
-    tripPlan.description = widget.description;
-    tripPlan.startingDate = startingDate;
-    tripPlan.endingDate = endingDate;
-    tripPlan.routeId = widget.routeId;
-    tripPlanProvider.addTripPlan(tripPlan).then((value) {
+    tripPlanProvider.editTripPlan(tripPlanProvider.tripPlan).then((value) {
       Navigator.pushNamed(context, TripPlanSavedListScreen.id);
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider<MapRouteProvider>(
-        create: (context) => mapRouteProvider,
-        child: Consumer<MapRouteProvider>(builder: (context, route, child) {
+    return ChangeNotifierProvider<TripPlanProvider>(
+        create: (context) => tripPlanProvider,
+        child: Consumer<TripPlanProvider>(builder: (context, route, child) {
           return Scaffold(
             appBar: AppBar(title: Text('Canoe planner')),
             backgroundColor: backgroundColor,
@@ -105,7 +99,7 @@ class _TripPlanTimeCreateScreenState extends State<TripPlanTimeCreateScreen> {
                                     DateTimePicker(
                                       type: DateTimePickerType.dateTimeSeparate,
                                       dateMask: 'd MMM, yyyy',
-                                      initialValue: DateTime.now().toString(),
+                                      initialValue: route.tripPlan.startingDate,
                                       firstDate: DateTime(2000),
                                       lastDate: DateTime(2100),
                                       icon: Icon(Icons.event),
@@ -120,7 +114,8 @@ class _TripPlanTimeCreateScreenState extends State<TripPlanTimeCreateScreen> {
 
                                         return true;
                                       },
-                                      onChanged: (val) => startingDate = val,
+                                      onChanged: (val) =>
+                                          route.tripPlan.startingDate = val,
                                       validator: (val) {
                                         print(val);
                                         return null;
@@ -152,13 +147,14 @@ class _TripPlanTimeCreateScreenState extends State<TripPlanTimeCreateScreen> {
                                     DateTimePicker(
                                       type: DateTimePickerType.dateTimeSeparate,
                                       dateMask: 'd MMM, yyyy',
-                                      initialValue: DateTime.now().toString(),
+                                      initialValue: route.tripPlan.endingDate,
                                       firstDate: DateTime(2000),
                                       lastDate: DateTime(2100),
                                       icon: Icon(Icons.event),
                                       dateLabelText: 'Date',
                                       timeLabelText: "Time",
-                                      onChanged: (val) => endingDate = val,
+                                      onChanged: (val) =>
+                                          route.tripPlan.endingDate = val,
                                       validator: (val) {
                                         print(val);
                                         return null;

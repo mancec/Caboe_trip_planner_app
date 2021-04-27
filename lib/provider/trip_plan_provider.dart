@@ -26,6 +26,11 @@ class TripPlanProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  void setTripPlan(TripPlan tripPlan) {
+    this.tripPlan = tripPlan;
+    notifyListeners();
+  }
+
   Future addUserTripPlan(int id) async {
     setState(ViewState.Busy);
     var response;
@@ -45,7 +50,7 @@ class TripPlanProvider extends ChangeNotifier {
   Future getTripPlan(int id) async {
     setState(ViewState.Busy);
     var response;
-    response = await _api.getTripPlan(id);
+    tripPlan = await _api.getTripPlan(id);
     setState(ViewState.Idle);
   }
 

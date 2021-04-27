@@ -1,3 +1,4 @@
+import 'package:canoe_trip_planner/components/appBarMenu.dart';
 import 'package:canoe_trip_planner/components/map_route_list_card.dart';
 import 'package:canoe_trip_planner/components/roundedButton.dart';
 import 'package:canoe_trip_planner/components/trip_plan_meniu_items.dart';
@@ -7,7 +8,9 @@ import 'package:canoe_trip_planner/provider/map_route_provider.dart';
 import 'package:canoe_trip_planner/provider/trip_plan_provider.dart';
 import 'package:canoe_trip_planner/screens/Company/Shared/company_map_route_detail_shared.dart';
 import 'package:canoe_trip_planner/screens/RouteMaps/map_route_detail_shared_screen.dart';
+import 'package:canoe_trip_planner/screens/TripPlan/trip_plan%20_detail_screen.dart';
 import 'package:canoe_trip_planner/screens/TripPlan/trip_plan_create_screen.dart';
+import 'package:canoe_trip_planner/screens/TripPlan/trip_plan_edit_screen.dart';
 import 'package:canoe_trip_planner/utils/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -47,6 +50,7 @@ class _TripPlanSavedListScreenState extends State<TripPlanSavedListScreen> {
       child: Consumer<TripPlanProvider>(builder: (context, model, child) {
         return Scaffold(
             appBar: AppBar(),
+            drawer: AppBarMenu(),
             backgroundColor: backgroundColor,
             body: model.state == ViewState.Busy
                 ? Center(child: CircularProgressIndicator())
@@ -100,11 +104,27 @@ class _TripPlanSavedListScreenState extends State<TripPlanSavedListScreen> {
                   child: Row(
                     children: [
                       GestureDetector(
+                        child: Text('View Trip Plan'),
+                        onTap: () {
+                          Navigator.push(context,
+                              MaterialPageRoute(builder: (context) {
+                            return TripPlanDetailScreen(
+                                routeId: mapRoutes[index].id);
+                          }));
+                        },
+                      )
+                    ],
+                  ),
+                ),
+                PopupMenuItem(
+                  child: Row(
+                    children: [
+                      GestureDetector(
                         child: Text('Edit Trip Plan'),
                         onTap: () {
                           Navigator.push(context,
                               MaterialPageRoute(builder: (context) {
-                            return TripPlanCreateScreen(
+                            return TripPlanEditScreen(
                                 routeId: mapRoutes[index].id);
                           }));
                         },
@@ -118,7 +138,11 @@ class _TripPlanSavedListScreenState extends State<TripPlanSavedListScreen> {
                       GestureDetector(
                         child: Text('Delete'),
                         onTap: () {
-                          _tripPlanProvider.deleteTripPlan(mapRoutes[index].id);
+                          Navigator.pop(context);
+                          _tripPlanProvider
+                              .deleteTripPlan(mapRoutes[index].id)
+                              .then(
+                                  (value) => _tripPlanProvider.getTripPlans());
                         },
                       )
                     ],
