@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:canoe_trip_planner/models/canoe_price.dart';
+import 'package:canoe_trip_planner/models/company_map_route.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:canoe_trip_planner/utils/decoder.dart';
 
@@ -20,13 +21,18 @@ class Company {
       this.contactNumber,
       this.canoePrice});
 
-  Company.fromJsonWithoutCoordinates(Map<String, dynamic> json) {
+  Company.fromJsonProfile(Map<String, dynamic> json) {
     id = json['id'];
-    contactEmail = json['contect_email'];
+    contactEmail = json['contact_email'];
     address = json['address'];
     workHours = json['work_hours'];
     contactNumber = json['contact_number'];
-    canoePrice = json['contect_email'];
+
+    int i = 0;
+    while (json['canoe_cost'].asMap().containsKey(i)) {
+      canoePrice.add(CanoePrice.fromJson(json['canoe_cost'][i]));
+      i++;
+    }
   }
 
   Company.fromJsonWithoutCoordinatesSingle(Map<String, dynamic> json) {
@@ -46,6 +52,13 @@ class Company {
     //   i++;
     // }
   }
+  Company.fromMapRoute(CompanyMapRoute companyMapRoute) {
+    this.contactEmail = companyMapRoute.contactEmail;
+    this.address = companyMapRoute.address;
+    this.workHours = companyMapRoute.workHours;
+    this.canoePrice = companyMapRoute.canoePrice;
+    this.contactNumber = companyMapRoute.contactNumber;
+  }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
@@ -54,7 +67,7 @@ class Company {
     data['work_hours'] = this.workHours;
     data['contact_number'] = this.contactNumber;
     data['canoe_price'] =
-        jsonEncode(canoePrice.map((e) => e.toJson()).toList());
+        jsonEncode(this.canoePrice.map((e) => e.toJson()).toList());
     print(data);
     return data;
   }

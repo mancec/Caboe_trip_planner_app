@@ -30,6 +30,7 @@ class MapRoute {
     id = json['id'];
     title = json['title'];
     author = json['author'];
+    description = json['description'];
     isCompany = json['isCompany'];
     isShared = json['isShared'];
     polylineName = json['polylineName'];
@@ -39,6 +40,7 @@ class MapRoute {
     id = json['mapRoute']['id'];
     title = json['mapRoute']['title'];
     author = json['mapRoute']['author'];
+    description = json['mapRoute']['description'];
     isCompany = json['mapRoute']['isCompany'];
     isShared = json['mapRoute']['isShared'];
     polylineName = json['mapRoute']['polylineName'];
@@ -50,11 +52,22 @@ class MapRoute {
     }
   }
 
+  MapRoute.fromJsonTripPlans(Map<String, dynamic> json) {
+    id = json['trip_plan_routes']['id'];
+    title = json['trip_plan_routes']['title'];
+    author = json['trip_plan_routes']['author'];
+    description = json['trip_plan_routes']['description'];
+    isCompany = json['trip_plan_routes']['isCompany'];
+    isShared = json['trip_plan_routes']['isShared'];
+    polylineName = json['trip_plan_routes']['polylineName'];
+  }
+
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['id'] = this.id;
     data['title'] = this.title;
     data['author'] = this.author;
+    data['description'] = this.description;
     data['polyline'] = this.polyline;
     data['polylineName'] = this.polylineName;
     return data;

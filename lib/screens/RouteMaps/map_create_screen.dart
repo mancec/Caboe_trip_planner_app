@@ -23,8 +23,6 @@ class _MapScreenState extends State<MapCreateScreen> {
   MapRouteProvider mapRouteProvider = locator<MapRouteProvider>();
   MapRoute mapRoute = MapRoute();
   final _formKey = GlobalKey<FormState>();
-  final TextEditingController _authorEditingController =
-      TextEditingController();
   final TextEditingController _titleEditingController = TextEditingController();
   final TextEditingController _descriptionEditingController =
       TextEditingController();
@@ -183,7 +181,8 @@ class _MapScreenState extends State<MapCreateScreen> {
 
   void _saveMap() async {
     // mapRouteProvider.saveMapRoutes(mapRoute);
-    await showInformationDialog(context);
+    await showInformationDialog(context)
+        .then((value) => Navigator.of(context).pop());
   }
 
   Future<void> showInformationDialog(BuildContext context) async {
@@ -198,14 +197,6 @@ class _MapScreenState extends State<MapCreateScreen> {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      TextFormField(
-                        controller: _authorEditingController,
-                        validator: (value) {
-                          return value.isNotEmpty ? null : "Enter your name";
-                        },
-                        decoration:
-                            InputDecoration(hintText: "Please enter your name"),
-                      ),
                       TextFormField(
                         controller: _titleEditingController,
                         validator: (value) {
@@ -234,14 +225,17 @@ class _MapScreenState extends State<MapCreateScreen> {
                     child: Text('Save', style: TextStyle(fontSize: 16)),
                     onTap: () {
                       if (_formKey.currentState.validate()) {
-                        mapRoute.author = _authorEditingController.text;
                         mapRoute.title = _titleEditingController.text;
                         mapRoute.description =
                             _descriptionEditingController.text;
+                        mapRoute.author =
+                            Provider.of<AuthProvider>(context, listen: false)
+                                .name;
 
                         // Do something like updating SharedPreferences or User Settings etc.
-                        mapRouteProvider.saveMapRoutes(mapRoute);
-                        Navigator.of(context).pop();
+                        mapRouteProvider
+                            .saveMapRoutes(mapRoute)
+                            .then((value) => Navigator.of(context).pop());
                       }
                     },
                   ),

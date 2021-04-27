@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
-const API_URL = 'https://4cacdd7ae713.ngrok.io';
-
 const kSendButtonTextStyle = TextStyle(
   color: Colors.lightBlueAccent,
   fontWeight: FontWeight.bold,
@@ -48,3 +46,12 @@ const CameraPosition kLake = CameraPosition(
     target: LatLng(37.43296265331129, -122.08832357078792),
     tilt: 59.440717697143555,
     zoom: 19.151926040649414);
+
+const List<String> canoeTypes = [
+  'Vienvietė',
+  'Dvivietė',
+  'Trivietė',
+  'Keturvietė'
+];
+
+const kLogoColor = const Color(0xff3e2723);

@@ -19,6 +19,8 @@ class CompanyMapRouteProvider extends ChangeNotifier {
     _state = newState;
   }
 
+  int response_code;
+
   List<CompanyMapRoute> companyMapRoutes = [];
 
   CompanyMapRoute companyMapRoute;
@@ -33,6 +35,7 @@ class CompanyMapRouteProvider extends ChangeNotifier {
   Future getCompanyMapRoute(int id) async {
     setState(ViewState.Busy);
     companyMapRoute = await _api.fetchCompanyMapRoute(id);
+    company = Company.fromMapRoute(companyMapRoute);
     mapRoute = await _api.fetchMapRoute(id);
     print("return");
     print(mapRoute.author);
@@ -45,15 +48,6 @@ class CompanyMapRouteProvider extends ChangeNotifier {
     setState(ViewState.Idle);
   }
 
-  Future saveCompanyMapRoute(CompanyMapRoute companyMapRoute, String title,
-      String description, String author) async {
-    setState(ViewState.Busy);
-    print("save");
-    companyMapRoutes = await _api.saveCompanyMapRoute(
-        companyMapRoute, title, description, author);
-    setState(ViewState.Idle);
-  }
-
   Future saveCompanyProfile(Company companyProfile) async {
     setState(ViewState.Busy);
     company = await _api.saveCompanyProfile(companyProfile);
@@ -63,6 +57,32 @@ class CompanyMapRouteProvider extends ChangeNotifier {
   Future getCompanyProfile() async {
     setState(ViewState.Busy);
     company = await _api.getCompanyProfile();
+    setState(ViewState.Idle);
+  }
+
+  Future editCompanyProfile(company) async {
+    setState(ViewState.Busy);
+    company = await _api.editCompanyProfile(company);
+    setState(ViewState.Idle);
+  }
+
+  Future saveCompanyRoute(MapRoute mapRoute, Company company) async {
+    setState(ViewState.Busy);
+    response_code = await _api.saveCompanyRoute(mapRoute, company);
+    setState(ViewState.Idle);
+  }
+
+  Future editCompanyRoute(MapRoute mapRoute, Company company) async {
+    setState(ViewState.Busy);
+    response_code = await _api.editCompanyRoute(mapRoute, company);
+    setState(ViewState.Idle);
+  }
+
+  Future deleteCompanyRoute(int id) async {
+    setState(ViewState.Busy);
+    response_code = await _api.deleteCompanyRoute(id);
+    print('provider');
+    print(response_code);
     setState(ViewState.Idle);
   }
 }

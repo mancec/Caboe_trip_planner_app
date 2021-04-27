@@ -3,6 +3,8 @@ import 'dart:convert';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:canoe_trip_planner/utils/decoder.dart';
 
+import 'canoe_price.dart';
+
 class CompanyMapRoute {
   int id;
   List<LatLng> polyline = [];
@@ -12,26 +14,17 @@ class CompanyMapRoute {
   String address;
   String workHours;
   String contactNumber;
+  List<CanoePrice> canoePrice = [];
 
   CompanyMapRoute(
       {this.id,
       this.polyline,
-      this.canoeSeatCount,
       this.contactEmail,
       this.cost,
       this.address,
       this.workHours,
-      this.contactNumber});
-
-  // CompanyMapRoute(int id, String title, List<LatLng> polyline,
-  //     String description, String companyName, String contactEmail) {
-  //   this.id = id;
-  //   this.title = title;
-  //   this.polyline = polyline;
-  //   this.description = description;
-  //   this.companyName = companyName;
-  //   this.contactEmail = contactEmail;
-  // }
+      this.contactNumber,
+      this.canoePrice});
 
   CompanyMapRoute.addPolyline(LatLng coordinates) {
     polyline.add(coordinates);
@@ -40,13 +33,26 @@ class CompanyMapRoute {
   CompanyMapRoute.fromJsonWithoutCoordinates(Map<String, dynamic> json) {
     id = json['id'];
     address = json['address'];
+    contactEmail = json['address'];
+    workHours = json['address'];
+    contactNumber = json['address'];
     print(json['id']);
     print(json);
   }
 
   CompanyMapRoute.fromJsonWithoutCoordinatesSingle(Map<String, dynamic> json) {
-    id = json['mapRoute']['id'];
-    address = json['mapRoute']['address'];
+    id = json['companyRoute']['id'];
+    address = json['companyRoute']['address'];
+    contactEmail = json['companyRoute']['contact_email'];
+    workHours = json['companyRoute']['work_hours'];
+    contactNumber = json['companyRoute']['contact_number'];
+
+    int i = 0;
+    while (json['companyRoute']['canoe_cost'].asMap().containsKey(i)) {
+      canoePrice
+          .add(CanoePrice.fromJson(json['companyRoute']['canoe_cost'][i]));
+      i++;
+    }
   }
 
   CompanyMapRoute.fromJsonWithCoordinates(Map<String, dynamic> json) {

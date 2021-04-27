@@ -20,10 +20,9 @@ class AuthProvider extends ChangeNotifier {
   int get statusCode => _statusCode;
   UserRole _userRole = UserRole.guest;
   UserRole get userRole => _userRole;
+  String name;
 
   Future<bool> login(String email, String password) async {
-    var de = await getDeviceId();
-    print(de);
     final response = await http.post('$baseUrl/login', body: {
       'email': email,
       'password': password,
@@ -31,11 +30,11 @@ class AuthProvider extends ChangeNotifier {
     }, headers: {
       'Accept': 'application/json',
     });
-    print(response.body);
     if (response.statusCode == 200) {
       _statusCode = response.statusCode;
       Map<String, dynamic> responseJson = json.decode(response.body);
       Map<String, dynamic> payload = Jwt.parseJwt(responseJson['token']);
+      name = payload['name'];
       int i = 0;
       while (payload['roles'].asMap().containsKey(i)) {
         if (payload['roles'][i] == 'company') {
@@ -45,7 +44,6 @@ class AuthProvider extends ChangeNotifier {
           i++;
         }
       }
-
       await saveToken(responseJson['token']);
       _isAuthenticated = true;
       notifyListeners();
@@ -60,15 +58,16 @@ class AuthProvider extends ChangeNotifier {
   }
 
   Future<bool> register(String email, String password, String name,
-      String surname, String confirmed_email) async {
-    var de = await getDeviceId();
-    print(de);
-    final response = await http.post('$baseUrl/register', body: {
+      String _confirmedEmail, bool isCompany) async {
+    dynamic url = '$baseUrl/register';
+    if (isCompany) {
+      url = '$baseUrl/registerCompany/1';
+    }
+    final response = await http.post(url, body: {
       'email': email,
       'password': password,
       'name': name,
-      'surname': surname,
-      'confirmed_email': confirmed_email,
+      'confirmed_email': _confirmedEmail,
     }, headers: {
       'Accept': 'application/json',
     });
@@ -110,10 +109,7 @@ class AuthProvider extends ChangeNotifier {
 
   Future<String> getToken() async {
     final prefs = await SharedPreferences.getInstance();
-    String test = prefs.getString('Bearer');
-    print(test);
-    print("testas");
-    return test;
+    return prefs.getString('Bearer');
   }
 
   logout() async {

@@ -1,3 +1,4 @@
+import 'package:canoe_trip_planner/screens/RouteMaps/user_map_list_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../provider/auth_provider.dart';
@@ -19,7 +20,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   String _password;
   String _errorMessage = '';
   String _name;
-  String _confirmed_email;
+  String _confirmedEmail;
   String _surname;
 
   Future<void> submitForm() async {
@@ -27,8 +28,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       _errorMessage = '';
     });
     bool result = await Provider.of<AuthProvider>(context, listen: false)
-        .register(_email, _password, _name, _surname, _confirmed_email);
-    print("statusas" +
+        .register(_email, _password, _name, _confirmedEmail, false);
+    print("status" +
         Provider.of<AuthProvider>(context, listen: false)
             .statusCode
             .toString());
@@ -38,8 +39,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       });
     } else if (Provider.of<AuthProvider>(context, listen: false).statusCode ==
         200) {
-      print("naujas langas");
-      Navigator.pushNamed(context, WelcomeScreen.id);
+      Navigator.pushNamed(context, UserMapListScreen.id);
     }
   }
 
@@ -64,16 +64,6 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
               ),
               TextFormField(
                 decoration: InputDecoration(
-                    hintText: 'Surname',
-                    icon: Icon(
-                      Icons.assignment_ind_rounded,
-                    )),
-                validator: (value) =>
-                    value.isEmpty ? 'Please enter a surname' : null,
-                onSaved: (value) => _surname = value,
-              ),
-              TextFormField(
-                decoration: InputDecoration(
                     hintText: 'Email',
                     icon: Icon(
                       Icons.mail,
@@ -90,7 +80,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                     )),
                 validator: (value) =>
                     value.isEmpty ? 'Please confirm your email address' : null,
-                onSaved: (value) => _confirmed_email = value,
+                onSaved: (value) => _confirmedEmail = value,
               ),
               TextFormField(
                 decoration: InputDecoration(

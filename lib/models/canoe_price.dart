@@ -15,4 +15,9 @@ class CanoePrice {
     data['price'] = this.price;
     return data;
   }
+
+  CanoePrice.fromJson(Map<String, dynamic> json) {
+    type = json['type'];
+    price = json['price'].toDouble();
+  }
 }

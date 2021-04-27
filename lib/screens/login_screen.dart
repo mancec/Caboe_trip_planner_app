@@ -1,9 +1,13 @@
 import 'package:canoe_trip_planner/components/appBarMenu.dart';
+import 'package:canoe_trip_planner/enums/user_role.dart';
 import 'package:flutter/material.dart';
 import 'package:canoe_trip_planner/components/roundedButton.dart';
 import 'package:canoe_trip_planner/utils/constants.dart';
 import 'package:canoe_trip_planner/provider/auth_provider.dart';
 import 'package:provider/provider.dart';
+
+import 'Company/company_map_list_screen.dart';
+import 'RouteMaps/user_map_list_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   static const String id = 'login_screen';
@@ -16,8 +20,8 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
-  String _email;
-  String _password;
+  String _email = "test@test1.com";
+  String _password = "test1234";
   String _errorMessage = '';
 
   Future<void> submitForm() async {
@@ -30,6 +34,14 @@ class _LoginScreenState extends State<LoginScreen> {
       setState(() {
         _errorMessage = 'There was a problem with your credentials.';
       });
+    }
+    if (result) {
+      print("suces");
+      print(Provider.of<AuthProvider>(context, listen: false).userRole);
+      Provider.of<AuthProvider>(context, listen: false).userRole ==
+              UserRole.company
+          ? Navigator.pushNamed(context, CompanyMapListScreen.id)
+          : Navigator.pushNamed(context, UserMapListScreen.id);
     }
   }
 
@@ -45,6 +57,7 @@ class _LoginScreenState extends State<LoginScreen> {
           child: ListView(
             children: <Widget>[
               TextFormField(
+                initialValue: _email,
                 decoration: InputDecoration(
                     hintText: 'Email',
                     icon: Icon(
@@ -55,6 +68,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 onSaved: (value) => _email = value,
               ),
               TextFormField(
+                initialValue: _password,
                 decoration: InputDecoration(
                   hintText: 'Password',
                   icon: Icon(

@@ -1,30 +1,51 @@
-import 'package:canoe_trip_planner/components/mapRoutelist_item.dart';
+import 'package:canoe_trip_planner/components/appBarMenu.dart';
+import 'package:canoe_trip_planner/components/map_route_list_card.dart';
 import 'package:canoe_trip_planner/enums/viewstate.dart';
-import 'package:canoe_trip_planner/models/company_map_route.dart';
 import 'package:canoe_trip_planner/models/map_route.dart';
-import 'package:canoe_trip_planner/provider/company_map_route_provider.dart';
 import 'package:canoe_trip_planner/provider/map_route_provider.dart';
 import 'package:canoe_trip_planner/screens/Company/company_post_detail_screen.dart';
 import 'package:canoe_trip_planner/utils/app_colors.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_speed_dial/flutter_speed_dial.dart';
+import 'package:overlay_support/overlay_support.dart';
 import 'package:provider/provider.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 import '../../locator.dart';
-import 'company_map_route_screen.dart';
+import 'company_post_create_screen.dart';
 
 class CompanyMapListScreen extends StatefulWidget {
-  static const String id = 'user_map_list_screen';
+  final String message;
+
+  CompanyMapListScreen({this.message});
+  static const String id = 'company_map_list_screen';
   @override
-  _UserMapListScreenState createState() => _UserMapListScreenState();
+  _CompanyMapListScreenState createState() => _CompanyMapListScreenState();
 }
 
-class _UserMapListScreenState extends State<CompanyMapListScreen> {
+class _CompanyMapListScreenState extends State<CompanyMapListScreen> {
+  final GlobalKey<ScaffoldState> scaffoldKey = new GlobalKey<ScaffoldState>();
   MapRouteProvider model = locator<MapRouteProvider>();
+  final Widget emptyWidget = new Container(width: 0, height: 0);
+  String message;
+  RefreshController _refreshController =
+      RefreshController(initialRefresh: false);
 
   @override
   void initState() {
-    model.getMapRoutes();
+    message = widget.message;
+    model.getCompanyMapRoutes();
     super.initState();
+  }
+
+  void _onRefresh() async {
+    message = 'helo';
+    model.getCompanyMapRoutes();
+    _refreshController.loadComplete();
+  }
+
+  void _onLoading() async {
+    model.getCompanyMapRoutes();
   }
 
   @override
@@ -32,8 +53,12 @@ class _UserMapListScreenState extends State<CompanyMapListScreen> {
     return ChangeNotifierProvider<MapRouteProvider>(
       create: (context) => model,
       child: Consumer<MapRouteProvider>(builder: (context, model, child) {
-        return Scaffold(
+        return WillPopScope(
+          onWillPop: () async => false,
+          child: Scaffold(
+            key: scaffoldKey,
             appBar: AppBar(),
+            drawer: AppBarMenu(),
             backgroundColor: backgroundColor,
             body: model.state == ViewState.Busy
                 ? Center(child: CircularProgressIndicator())
@@ -41,30 +66,52 @@ class _UserMapListScreenState extends State<CompanyMapListScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       Padding(
-                        padding: const EdgeInsets.only(left: 20.0),
+                        padding: const EdgeInsets.only(top: 5.0, bottom: 5.0),
                         child: Center(
                           child: Text(
-                            'Created Maps',
+                            'Created Offers',
                             style: TextStyle(
                                 fontSize: 35, fontWeight: FontWeight.w900),
                           ),
                         ),
                       ),
                       Expanded(child: getPostsUi(model.mapRoutes)),
+                      message != null
+                          ? showSimpleNotification(Text(message),
+                              duration: Duration(milliseconds: 2000),
+                              background: kLightBackground)
+                          : emptyWidget
                     ],
-                  ));
+                  ),
+            floatingActionButton: SpeedDial(
+              animatedIcon: AnimatedIcons.add_event,
+              onPress: () {
+                Navigator.pushNamed(context, CompanyPostCreateScreen.id);
+              },
+            ),
+          ),
+        );
       }),
     );
   }
 
-  Widget getPostsUi(List<MapRoute> mapRoutes) => ListView.builder(
-      itemCount: mapRoutes.length,
-      itemBuilder: (context, index) => mapRouteListItem(
-            mapRoute: mapRoutes[index],
-            onTap: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) {
-                return CompanyPostDetailScreen(mapId: mapRoutes[index].id);
-              }));
-            },
-          ));
+  Widget getPostsUi(List<MapRoute> mapRoutes) => SmartRefresher(
+        enablePullDown: true,
+        enablePullUp: true,
+        controller: _refreshController,
+        onRefresh: _onRefresh,
+        onLoading: _onLoading,
+        child: ListView.builder(
+            itemCount: mapRoutes.length,
+            itemBuilder: (context, index) => MapRouteListCard(
+                  mapRoute: mapRoutes[index],
+                  onTap: () {
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) {
+                      return CompanyPostDetailScreen(
+                          mapId: mapRoutes[index].id);
+                    }));
+                  },
+                )),
+      );
 }

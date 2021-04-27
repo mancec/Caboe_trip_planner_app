@@ -1,4 +1,7 @@
 import 'package:canoe_trip_planner/components/map_create_dialog.dart';
+import 'package:canoe_trip_planner/models/company.dart';
+import 'package:canoe_trip_planner/provider/company_map_route_provider.dart';
+import 'package:canoe_trip_planner/screens/Company/company_map_list_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
@@ -14,17 +17,23 @@ import 'package:canoe_trip_planner/provider/auth_provider.dart';
 import 'package:canoe_trip_planner/screens/Authentication/login.dart';
 
 class CompanyMapCreateScreen extends StatefulWidget {
+  final Company company;
   static const String id = 'company_map_create_screen';
+  CompanyMapCreateScreen({this.company});
   @override
   _MapScreenState createState() => _MapScreenState();
 }
 
 class _MapScreenState extends State<CompanyMapCreateScreen> {
-  MapRouteProvider mapRouteProvider = locator<MapRouteProvider>();
+  CompanyMapRouteProvider companyMapRouteProvider =
+      locator<CompanyMapRouteProvider>();
   MapRoute mapRoute = MapRoute();
-
-  Completer<GoogleMapController> _controller = Completer();
+  final _formKey = GlobalKey<FormState>();
+  final TextEditingController _titleEditingController = TextEditingController();
+  final TextEditingController _descriptionEditingController =
+      TextEditingController();
   GoogleMapController controller;
+  String errorMessage;
 
   List<LatLng> plineCoordinates = [];
   final Set<Marker> _markers = {};
@@ -38,6 +47,7 @@ class _MapScreenState extends State<CompanyMapCreateScreen> {
   void initState() {
     _getLocation();
     mapRoute.polyline = List();
+    mapRoute.author = Provider.of<AuthProvider>(context, listen: false).name;
     super.initState();
   }
 
@@ -176,6 +186,78 @@ class _MapScreenState extends State<CompanyMapCreateScreen> {
   }
 
   void _saveMap() async {
-    Navigator.pop(context, mapRoute.polyline);
+    // mapRouteProvider.saveMapRoutes(mapRoute);
+    await showInformationDialog(context);
+  }
+
+  Future<void> showInformationDialog(BuildContext context) async {
+    return await showDialog(
+        context: context,
+        builder: (context) {
+          bool isChecked = false;
+          return StatefulBuilder(builder: (context, setState) {
+            return AlertDialog(
+              content: Form(
+                  key: _formKey,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      TextFormField(
+                        controller: _titleEditingController,
+                        validator: (value) {
+                          return value.isNotEmpty ? null : "Enter a title";
+                        },
+                        decoration: InputDecoration(
+                            hintText: "Please enter a title",
+                            labelText: 'Title'),
+                      ),
+                      TextFormField(
+                        controller: _descriptionEditingController,
+                        validator: (value) {
+                          return value.isNotEmpty
+                              ? null
+                              : "Enter a short description";
+                        },
+                        decoration: InputDecoration(
+                            hintText: "Please leave a short description",
+                            labelText: 'Description'),
+                      ),
+                    ],
+                  )),
+              title: Text('Additional Route information'),
+              actions: <Widget>[
+                Padding(
+                  padding: EdgeInsets.all(16.0),
+                  child: InkWell(
+                    child: Text('Save', style: TextStyle(fontSize: 16)),
+                    onTap: () {
+                      if (_formKey.currentState.validate()) {
+                        mapRoute.title = _titleEditingController.text;
+                        mapRoute.description =
+                            _descriptionEditingController.text;
+
+                        // Do something like updating SharedPreferences or User Settings etc.
+                        companyMapRouteProvider
+                            .saveCompanyRoute(mapRoute, widget.company)
+                            .then((value) {
+                          if (companyMapRouteProvider.response_code == 200) {
+                            Navigator.pushNamed(
+                                context, CompanyMapListScreen.id);
+                          } else {
+                            errorMessage = "Map route was not saved";
+                          }
+                        });
+                        // if (companyMapRouteProvider.response_code == 200)
+                        //   {
+                        //     Navigator.of(context).pop();
+                        //   }
+                      }
+                    },
+                  ),
+                ),
+              ],
+            );
+          });
+        });
   }
 }

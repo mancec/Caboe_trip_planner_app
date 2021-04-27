@@ -7,11 +7,9 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
 
-import '../../locator.dart';
-
-class CompanyMapRouteDetailScreen extends StatefulWidget {
-  static const String id = 'company_map_route_detail_screen';
-  CompanyMapRouteDetailScreen({this.mapId});
+class CompanyMapRouteViewScreen extends StatefulWidget {
+  static const String id = 'company_map_route_view_screen';
+  CompanyMapRouteViewScreen({this.mapId});
 
   final int mapId;
 
@@ -19,7 +17,7 @@ class CompanyMapRouteDetailScreen extends StatefulWidget {
   _MapRouteScreenState createState() => _MapRouteScreenState();
 }
 
-class _MapRouteScreenState extends State<CompanyMapRouteDetailScreen> {
+class _MapRouteScreenState extends State<CompanyMapRouteViewScreen> {
   CompanyMapRouteProvider mapRouteProvider = CompanyMapRouteProvider();
 
   Set<Polyline> _polyline = {};
