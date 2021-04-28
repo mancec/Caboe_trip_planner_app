@@ -35,11 +35,17 @@ class MapRouteListTile extends StatelessWidget {
             Expanded(
                 flex: 1,
                 child: Container(
-                  child: LinearProgressIndicator(
-                      backgroundColor: Color.fromRGBO(209, 224, 224, 0.2),
-                      value: 0.9,
-                      valueColor: AlwaysStoppedAnimation(Colors.red)),
-                )),
+                    child: 2 == 2 && mapRoute.isCompany == 1
+                        ? Text(
+                            r"$",
+                            style: TextStyle(color: Colors.green),
+                          )
+                        : Text('')
+                    // child: LinearProgressIndicator(
+                    //     backgroundColor: Color.fromRGBO(209, 224, 224, 0.2),
+                    //     value: 0.9,
+                    //     valueColor: AlwaysStoppedAnimation(Colors.red)),
+                    )),
             Expanded(
               flex: 4,
               child: Padding(

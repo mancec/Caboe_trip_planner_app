@@ -7,30 +7,14 @@ import 'dart:convert';
 class MapRouteRepository {
   ApiBaseHelper _helper = ApiBaseHelper();
 
-  Future<List<MapRoute>> fetchMapRouteList() async {
-    var mapRoutes = List<MapRoute>();
-
-    var response = await _helper.get("/mapRoute");
-    var parsed = response as List<dynamic>;
-
-    for (var mapRoute in parsed) {
-      mapRoutes.add(MapRoute.fromJsonWithoutCoordinates(mapRoute));
-    }
-
-    return mapRoutes;
+  Future fetchMapRouteList(String page) async {
+    var response = await _helper.getWithParam("/mapRoute", page);
+    return response;
   }
 
-  Future<List<MapRoute>> fetchUserMapRouteList() async {
-    var mapRoutes = List<MapRoute>();
-
-    var response = await _helper.get("/mapRouteUser");
-    var parsed = response as List<dynamic>;
-
-    for (var mapRoute in parsed) {
-      mapRoutes.add(MapRoute.fromJsonWithoutCoordinates(mapRoute));
-    }
-
-    return mapRoutes;
+  Future fetchUserMapRouteList(String page) async {
+    var response = await _helper.getWithParam("/mapRouteUser", page);
+    return response;
   }
 
   Future<MapRoute> fetchMapRoute(int id) async {
@@ -73,17 +57,9 @@ class MapRouteRepository {
 
   // Company api calls
 
-  Future<List<MapRoute>> fetchCompanyMapRouteList() async {
-    var mapRoutes = List<MapRoute>();
-
-    var response = await _helper.get("/companyMapRoute");
-    var parsed = response as List<dynamic>;
-
-    for (var mapRoute in parsed) {
-      mapRoutes.add(MapRoute.fromJsonWithoutCoordinates(mapRoute));
-    }
-
-    return mapRoutes;
+  Future fetchCompanyMapRouteList(String page) async {
+    var response = await _helper.getWithParam("/companyMapRoute", page);
+    return response;
   }
 
   Future saveCompanyMapRoute(CompanyMapRoute companyMapRoute, String title,

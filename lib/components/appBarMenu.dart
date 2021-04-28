@@ -46,7 +46,7 @@ class AppBarMenu extends StatelessWidget {
             ),
           if (Provider.of<AuthProvider>(context).userRole == UserRole.company)
             ListTile(
-              leading: Icon(Icons.add_location_alt_rounded),
+              leading: Icon(Icons.assignment_ind_rounded),
               title: Text('Company profile'),
               onTap: () => {
                 Navigator.pushNamed(context, CompanyProfileEditScreen.id),
@@ -54,12 +54,20 @@ class AppBarMenu extends StatelessWidget {
             ),
           if (Provider.of<AuthProvider>(context).userRole == UserRole.company)
             ListTile(
-              leading: Icon(Icons.add_location_alt_rounded),
+              leading: Icon(Icons.auto_stories),
               title: Text('My company offers'),
               onTap: () => {
                 Navigator.pushNamed(context, CompanyMapListScreen.id),
               },
             ),
+          if (Provider.of<AuthProvider>(context).userRole == UserRole.company)
+            Divider(),
+          if (Provider.of<AuthProvider>(context).userRole == UserRole.company)
+            Center(
+                child: Text(
+              'Personal Use',
+              style: TextStyle(fontSize: 16, color: kLightBackground),
+            )),
           if (Provider.of<AuthProvider>(context).isAuthenticated)
             ListTile(
               leading: Icon(Icons.add_location_alt_rounded),

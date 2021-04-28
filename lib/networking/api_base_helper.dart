@@ -42,6 +42,39 @@ class ApiBaseHelper {
     return responseJson;
   }
 
+  Future<dynamic> getWithParam(String url, String param) async {
+    AuthProvider auth = locator<AuthProvider>();
+    print('Api Get, url $url');
+    String token;
+    await auth.getToken().then((String result) {
+      token = result;
+    });
+    var responseJson;
+    if (token != null) {
+      print("su tokenu");
+      String Bearer = 'Bearer ' + token;
+      print(baseUrl + url + '?$param');
+      try {
+        final response = await http
+            .get(baseUrl + url + '?$param', headers: {'Authorization': Bearer});
+        responseJson = _returnResponse(response);
+      } on SocketException {
+        print('No net');
+        throw FetchDataException('No Internet connection');
+      }
+    } else {
+      try {
+        final response = await http.get(baseUrl + url + '?$param');
+        responseJson = _returnResponse(response);
+      } on SocketException {
+        print('No net');
+        throw FetchDataException('No Internet connection');
+      }
+    }
+    print('api get recieved!');
+    return responseJson;
+  }
+
   Future<dynamic> post(String url, dynamic body) async {
     AuthProvider auth = locator<AuthProvider>();
     print('Api Post, url $url');

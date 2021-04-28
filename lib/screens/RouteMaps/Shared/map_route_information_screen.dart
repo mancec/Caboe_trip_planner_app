@@ -1,7 +1,9 @@
 import 'package:canoe_trip_planner/components/alert_dialog.dart';
 import 'package:canoe_trip_planner/components/roundedButton.dart';
+import 'package:canoe_trip_planner/enums/user_role.dart';
 import 'package:canoe_trip_planner/enums/viewstate.dart';
 import 'package:canoe_trip_planner/models/canoe_price.dart';
+import 'package:canoe_trip_planner/provider/auth_provider.dart';
 import 'package:canoe_trip_planner/provider/company_map_route_provider.dart';
 import 'package:canoe_trip_planner/provider/map_route_provider.dart';
 import 'package:canoe_trip_planner/provider/trip_plan_provider.dart';
@@ -109,28 +111,31 @@ class _MapRouteInformationScreenState extends State<MapRouteInformationScreen> {
                       ),
                     ],
                   ),
-            floatingActionButton:
-                SpeedDial(animatedIcon: AnimatedIcons.menu_close, children: [
-              SpeedDialChild(
-                  child: Icon(Icons.add),
-                  label: "Add To Trip Plan",
-                  onTap: () {
-                    tripPlanProvider
-                        .addUserTripPlan(route.mapRoute.id)
-                        .then((value) {
-                      if (tripPlanProvider.response_code == 200) {
-                        showSimpleNotification(Text("Route added to your plan"),
-                            duration: Duration(milliseconds: 2000),
-                            background: kLightBackground);
-                      } else {
-                        showSimpleNotification(
-                            Text("Route already added to your trip plan"),
-                            duration: Duration(milliseconds: 2000),
-                            background: kLightBackground);
-                      }
-                    });
-                  }),
-            ]));
+            floatingActionButton: Provider.of<AuthProvider>(context)
+                    .isAuthenticated
+                ? SpeedDial(animatedIcon: AnimatedIcons.menu_close, children: [
+                    SpeedDialChild(
+                        child: Icon(Icons.add),
+                        label: "Add To Trip Plan",
+                        onTap: () {
+                          tripPlanProvider
+                              .addUserTripPlan(route.mapRoute.id)
+                              .then((value) {
+                            if (tripPlanProvider.response_code == 200) {
+                              showSimpleNotification(
+                                  Text("Route added to your plan"),
+                                  duration: Duration(milliseconds: 2000),
+                                  background: kLightBackground);
+                            } else {
+                              showSimpleNotification(
+                                  Text("Route already added to your trip plan"),
+                                  duration: Duration(milliseconds: 2000),
+                                  background: kLightBackground);
+                            }
+                          });
+                        }),
+                  ])
+                : null);
       }),
     );
   }

@@ -4,11 +4,13 @@ import 'package:canoe_trip_planner/enums/viewstate.dart';
 import 'package:canoe_trip_planner/models/canoe_price.dart';
 import 'package:canoe_trip_planner/provider/company_map_route_provider.dart';
 import 'package:canoe_trip_planner/provider/map_route_provider.dart';
+import 'package:canoe_trip_planner/provider/trip_plan_provider.dart';
 import 'package:canoe_trip_planner/screens/Company/company_map_list_screen.dart';
 import 'package:canoe_trip_planner/utils/app_colors.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
+import 'package:overlay_support/overlay_support.dart';
 import 'package:provider/provider.dart';
 import 'package:canoe_trip_planner/utils/helper.dart';
 
@@ -29,6 +31,7 @@ class CompanyPostDetailScreen extends StatefulWidget {
 class _CompanyPostDetailScreenState extends State<CompanyPostDetailScreen> {
   CompanyMapRouteProvider companyMapRouteProvider =
       locator<CompanyMapRouteProvider>();
+  TripPlanProvider tripPlanProvider = new TripPlanProvider();
 
   @override
   void initState() {
@@ -155,6 +158,26 @@ class _CompanyPostDetailScreenState extends State<CompanyPostDetailScreen> {
             floatingActionButton: SpeedDial(
               animatedIcon: AnimatedIcons.menu_close,
               children: [
+                SpeedDialChild(
+                    child: Icon(Icons.add),
+                    label: "Add To Trip Plan",
+                    onTap: () {
+                      tripPlanProvider
+                          .addUserTripPlan(route.mapRoute.id)
+                          .then((value) {
+                        if (tripPlanProvider.response_code == 200) {
+                          showSimpleNotification(
+                              Text("Route added to your plan"),
+                              duration: Duration(milliseconds: 2000),
+                              background: kLightBackground);
+                        } else {
+                          showSimpleNotification(
+                              Text("Route already added to your trip plan"),
+                              duration: Duration(milliseconds: 2000),
+                              background: kLightBackground);
+                        }
+                      });
+                    }),
                 SpeedDialChild(
                     child: Icon(Icons.drive_file_rename_outline),
                     label: "Edit Route",

@@ -20,6 +20,8 @@ class MapRouteProvider extends ChangeNotifier {
   List<MapRoute> mapRoutes = [];
   int response_code;
   String response_message;
+  int pageTotal = 1;
+  int currentPage = 1;
 
   MapRoute mapRoute;
 
@@ -28,10 +30,28 @@ class MapRouteProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future getMapRoutes() async {
+  Future getMapRoutes({search}) async {
     setState(ViewState.Busy);
-    mapRoutes = await _api.fetchMapRouteList();
-    setState(ViewState.Idle);
+    if (pageTotal >= currentPage) {
+      if (currentPage == 1) {
+        mapRoutes = [];
+      }
+      String page = 'page=' + currentPage.toString();
+      if (search != null) {
+        page = page + '&search=$search';
+      }
+      var response = await _api.fetchMapRouteList(page);
+      currentPage = currentPage + 1;
+      print(response);
+      var parsed = response['data'] as List<dynamic>;
+      print(response['last_page']);
+      pageTotal = response['last_page'];
+
+      for (var mapRoute in parsed) {
+        mapRoutes.add(MapRoute.fromJsonWithoutCoordinates(mapRoute));
+      }
+      setState(ViewState.Idle);
+    }
   }
 
   Future getMapRoute(int id) async {
@@ -46,9 +66,28 @@ class MapRouteProvider extends ChangeNotifier {
     setState(ViewState.Idle);
   }
 
-  Future getUserMapRoutes() async {
+  Future getUserMapRoutes({search}) async {
     setState(ViewState.Busy);
-    mapRoutes = await _api.fetchUserMapRouteList();
+    if (pageTotal >= currentPage) {
+      if (currentPage == 1) {
+        mapRoutes = [];
+      }
+      String page = 'page=' + currentPage.toString();
+      if (search != null) {
+        page = page + '&search=$search';
+      }
+      var response = await _api.fetchUserMapRouteList(page);
+      currentPage = currentPage + 1;
+      print(response);
+      var parsed = response['data'] as List<dynamic>;
+      print(response['last_page']);
+      pageTotal = response['last_page'];
+
+      for (var mapRoute in parsed) {
+        mapRoutes.add(MapRoute.fromJsonWithoutCoordinates(mapRoute));
+      }
+    }
+
     setState(ViewState.Idle);
   }
 
@@ -60,9 +99,28 @@ class MapRouteProvider extends ChangeNotifier {
     setState(ViewState.Idle);
   }
 
-  Future getCompanyMapRoutes() async {
+  Future getCompanyMapRoutes({search}) async {
     setState(ViewState.Busy);
-    mapRoutes = await _api.fetchCompanyMapRouteList();
+
+    if (pageTotal >= currentPage) {
+      if (currentPage == 1) {
+        mapRoutes = [];
+      }
+      String page = 'page=' + currentPage.toString();
+      if (search != null) {
+        page = page + '&search=$search';
+      }
+      var response = await _api.fetchCompanyMapRouteList(page);
+      currentPage = currentPage + 1;
+      print(response);
+      var parsed = response['data'] as List<dynamic>;
+      print(response['last_page']);
+      pageTotal = response['last_page'];
+
+      for (var mapRoute in parsed) {
+        mapRoutes.add(MapRoute.fromJsonWithoutCoordinates(mapRoute));
+      }
+    }
     setState(ViewState.Idle);
   }
 

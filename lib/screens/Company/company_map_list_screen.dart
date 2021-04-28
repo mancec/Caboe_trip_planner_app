@@ -30,6 +30,7 @@ class _CompanyMapListScreenState extends State<CompanyMapListScreen> {
   String message;
   RefreshController _refreshController =
       RefreshController(initialRefresh: false);
+  TextEditingController controller = new TextEditingController();
 
   @override
   void initState() {
@@ -40,12 +41,32 @@ class _CompanyMapListScreenState extends State<CompanyMapListScreen> {
 
   void _onRefresh() async {
     message = 'helo';
+    model.currentPage = 1;
     model.getCompanyMapRoutes();
+    controller.clear();
     _refreshController.loadComplete();
   }
 
   void _onLoading() async {
-    model.getCompanyMapRoutes();
+    if (controller.text.isNotEmpty) {
+      model.getCompanyMapRoutes(search: controller.text);
+    } else {
+      model.getCompanyMapRoutes();
+    }
+    _refreshController.loadComplete();
+  }
+
+  onSearchTextChanged(String text) async {
+    model.mapRoutes = [];
+    model.currentPage = 1;
+    if (text.isEmpty) {
+      setState(() {});
+      return;
+    }
+    model.getCompanyMapRoutes(search: text);
+    print(controller.text);
+
+    setState(() {});
   }
 
   @override
@@ -72,6 +93,29 @@ class _CompanyMapListScreenState extends State<CompanyMapListScreen> {
                             'Created Offers',
                             style: TextStyle(
                                 fontSize: 35, fontWeight: FontWeight.w900),
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(
+                            bottom: 0, left: 5.0, right: 5),
+                        child: Card(
+                          child: new ListTile(
+                            leading: new Icon(Icons.search),
+                            title: new TextField(
+                              controller: controller,
+                              decoration: new InputDecoration(
+                                  hintText: 'Search', border: InputBorder.none),
+                              // onChanged: onSearchTextChanged,
+                              onSubmitted: onSearchTextChanged,
+                            ),
+                            trailing: new IconButton(
+                              icon: new Icon(Icons.cancel),
+                              onPressed: () {
+                                controller.clear();
+                                // onSearchTextChanged('');
+                              },
+                            ),
                           ),
                         ),
                       ),

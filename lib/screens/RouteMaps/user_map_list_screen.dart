@@ -27,6 +27,7 @@ class _UserMapListScreenState extends State<UserMapListScreen> {
   MapRouteProvider model = locator<MapRouteProvider>();
   RefreshController _refreshController =
       RefreshController(initialRefresh: false);
+  TextEditingController controller = new TextEditingController();
 
   @override
   void initState() {
@@ -35,12 +36,33 @@ class _UserMapListScreenState extends State<UserMapListScreen> {
   }
 
   void _onRefresh() async {
+    model.currentPage = 1;
+    print(model.currentPage);
     model.getUserMapRoutes();
+    controller.clear();
     _refreshController.loadComplete();
   }
 
   void _onLoading() async {
-    _refreshController.loadNoData();
+    if (controller.text.isNotEmpty) {
+      model.getUserMapRoutes(search: controller.text);
+    } else {
+      model.getUserMapRoutes();
+    }
+    _refreshController.loadComplete();
+  }
+
+  onSearchTextChanged(String text) async {
+    model.mapRoutes = [];
+    model.currentPage = 1;
+    if (text.isEmpty) {
+      setState(() {});
+      return;
+    }
+    model.getUserMapRoutes(search: text);
+    print(controller.text);
+
+    setState(() {});
   }
 
   @override
@@ -60,12 +82,35 @@ class _UserMapListScreenState extends State<UserMapListScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       Padding(
-                        padding: const EdgeInsets.only(top: 15, left: 20.0),
+                        padding: const EdgeInsets.only(top: 20, left: 20.0),
                         child: Center(
                           child: Text(
-                            'Create Routes',
+                            'Created Routes',
                             style: TextStyle(
                                 fontSize: 35, fontWeight: FontWeight.w900),
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(
+                            bottom: 0, left: 5.0, right: 5),
+                        child: Card(
+                          child: new ListTile(
+                            leading: new Icon(Icons.search),
+                            title: new TextField(
+                              controller: controller,
+                              decoration: new InputDecoration(
+                                  hintText: 'Search', border: InputBorder.none),
+                              // onChanged: onSearchTextChanged,
+                              onSubmitted: onSearchTextChanged,
+                            ),
+                            trailing: new IconButton(
+                              icon: new Icon(Icons.cancel),
+                              onPressed: () {
+                                controller.clear();
+                                // onSearchTextChanged('');
+                              },
+                            ),
                           ),
                         ),
                       ),
